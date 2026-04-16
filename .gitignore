@@ -1,0 +1,85 @@
+# ====================================================================
+# SECRETS — NEVER COMMIT THESE
+# ====================================================================
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local
+*.pem
+*.key
+credentials.json
+secrets/
+
+# API keys anywhere in configs
+config.local.json
+
+# ====================================================================
+# Python
+# ====================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ====================================================================
+# Node.js / Next.js
+# ====================================================================
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# ====================================================================
+# Data & Logs
+# ====================================================================
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+
+# Backtest results (local runs, regenerate from scripts)
+backtest_results.csv
+v3_backtest_results.csv
+smart_backtest_results.csv
+hybrid_backtest_results.csv
+
+# Runtime bot logs
+trades.log
+v3_trades.log
+smart_trades.log
+hybrid_trades.log
+
+# ====================================================================
+# Editor / OS
+# ====================================================================
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+.cursor/
+
+# ====================================================================
+# Docker
+# ====================================================================
+docker-compose.override.yml

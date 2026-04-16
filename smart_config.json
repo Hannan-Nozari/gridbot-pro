@@ -1,0 +1,69 @@
+{
+    "exchange": "binance",
+    "api_key": "YOUR_API_KEY_HERE",
+    "api_secret": "YOUR_API_SECRET_HERE",
+
+    "paper_trading": true,
+    "check_interval_seconds": 30,
+    "log_file": "smart_trades.log",
+
+    "pairs": [
+        {
+            "symbol": "ETH/USDT",
+            "grid": {
+                "lower_price": 1900,
+                "upper_price": 2300,
+                "num_grids": 10,
+                "investment_usdt": 80
+            }
+        },
+        {
+            "symbol": "SOL/USDT",
+            "grid": {
+                "lower_price": 60,
+                "upper_price": 120,
+                "num_grids": 10,
+                "investment_usdt": 60
+            }
+        },
+        {
+            "symbol": "BNB/USDT",
+            "grid": {
+                "lower_price": 550,
+                "upper_price": 700,
+                "num_grids": 10,
+                "investment_usdt": 60
+            }
+        }
+    ],
+
+    "volatility": {
+        "enabled": true,
+        "atr_period": 14,
+        "sensitivity": 50,
+        "update_every_hours": 4
+    },
+
+    "trend": {
+        "enabled": true,
+        "uptrend_buy_mult": 1.3,
+        "uptrend_sell_mult": 0.7,
+        "downtrend_buy_mult": 0.7,
+        "downtrend_sell_mult": 1.3
+    },
+
+    "volume_filter": {
+        "enabled": true,
+        "lookback": 24,
+        "spike_threshold": 3.0
+    },
+
+    "dynamic_tp": {
+        "enabled": true,
+        "momentum_period": 10,
+        "mild_momentum_pct": 3.0,
+        "mild_skip_levels": 2,
+        "strong_momentum_pct": 6.0,
+        "strong_skip_levels": 3
+    }
+}

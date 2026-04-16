@@ -1,0 +1,51 @@
+{
+    "exchange": "binance",
+    "api_key": "YOUR_API_KEY_HERE",
+    "api_secret": "YOUR_API_SECRET_HERE",
+
+    "paper_trading": true,
+    "check_interval_seconds": 30,
+    "log_file": "hybrid_trades.log",
+
+    "pairs": [
+        {
+            "symbol": "ETH/USDT",
+            "grid": {
+                "lower_price": 1900,
+                "upper_price": 2300,
+                "num_grids": 10,
+                "investment_usdt": 80
+            }
+        },
+        {
+            "symbol": "SOL/USDT",
+            "grid": {
+                "lower_price": 60,
+                "upper_price": 120,
+                "num_grids": 10,
+                "investment_usdt": 60
+            }
+        },
+        {
+            "symbol": "BNB/USDT",
+            "grid": {
+                "lower_price": 550,
+                "upper_price": 700,
+                "num_grids": 10,
+                "investment_usdt": 60
+            }
+        }
+    ],
+
+    "rsi": {
+        "enabled": false,
+        "period": 14,
+        "overbought": 85,
+        "oversold": 15
+    },
+
+    "trailing_stop": {
+        "enabled": false,
+        "drop_percent": 20
+    }
+}

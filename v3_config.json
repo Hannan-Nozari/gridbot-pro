@@ -1,0 +1,109 @@
+{
+    "exchange": "binance",
+    "api_key": "YOUR_API_KEY_HERE",
+    "api_secret": "YOUR_API_SECRET_HERE",
+
+    "paper_trading": true,
+    "check_interval_seconds": 30,
+    "log_file": "v3_trades.log",
+
+    "pairs": [
+        {
+            "symbol": "ETH/USDT",
+            "grid": {
+                "lower_price": 1900,
+                "upper_price": 2300,
+                "num_grids": 10,
+                "investment_usdt": 80
+            }
+        },
+        {
+            "symbol": "SOL/USDT",
+            "grid": {
+                "lower_price": 60,
+                "upper_price": 120,
+                "num_grids": 10,
+                "investment_usdt": 60
+            }
+        },
+        {
+            "symbol": "BNB/USDT",
+            "grid": {
+                "lower_price": 550,
+                "upper_price": 700,
+                "num_grids": 10,
+                "investment_usdt": 60
+            }
+        }
+    ],
+
+    "layers": {
+        "bollinger": {
+            "enabled": true,
+            "period": 20,
+            "num_std": 2.0,
+            "padding_pct": 0.1,
+            "update_every_hours": 4
+        },
+
+        "dynamic_tp": {
+            "enabled": true,
+            "momentum_period": 10,
+            "mild_momentum_pct": 3.0,
+            "mild_skip_levels": 2,
+            "strong_momentum_pct": 6.0,
+            "strong_skip_levels": 3
+        },
+
+        "vwap": {
+            "enabled": true,
+            "period": 20,
+            "threshold_pct": 1.0,
+            "below_vwap_buy_mult": 1.2,
+            "above_vwap_sell_mult": 1.2
+        },
+
+        "dynamic_sizing": {
+            "enabled": true,
+            "win_streak_threshold": 3,
+            "win_streak_mult": 1.3,
+            "loss_streak_threshold": 3,
+            "loss_streak_mult": 0.7
+        },
+
+        "btc_correlation": {
+            "enabled": true,
+            "lookback": 6,
+            "crash_threshold_pct": 3.0,
+            "recovery_threshold_pct": 1.0
+        },
+
+        "drawdown_breaker": {
+            "enabled": true,
+            "max_drawdown_pct": 15.0,
+            "cooldown_hours": 24
+        },
+
+        "profit_lock": {
+            "enabled": true,
+            "lock_after_pct": 5.0,
+            "lock_ratio": 0.5
+        },
+
+        "fear_greed": {
+            "enabled": true,
+            "period": 14,
+            "extreme_fear": 25,
+            "extreme_greed": 75,
+            "fear_buy_mult": 1.3,
+            "fear_sell_mult": 0.7,
+            "greed_buy_mult": 0.7,
+            "greed_sell_mult": 1.3
+        },
+
+        "fee_optimization": {
+            "enabled": true,
+            "size_boost": 1.05
+        }
+    }
+}

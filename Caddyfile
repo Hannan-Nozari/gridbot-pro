@@ -1,0 +1,54 @@
+# tradinix.com - HTTPS via Cloudflare
+# Serves HTTPS on 443 with an internal cert so Cloudflare can connect in "Full" SSL mode.
+# Also serves HTTP on 80 for direct IP access and Cloudflare "Flexible" fallback.
+
+{
+    admin off
+    auto_https disable_redirects
+    local_certs
+}
+
+# HTTPS for Cloudflare "Full" mode and direct access
+tradinix.com, www.tradinix.com {
+    tls internal
+
+    # API routes
+    handle /api/* {
+        reverse_proxy backend:8000
+    }
+
+    # WebSocket endpoint
+    handle /ws* {
+        reverse_proxy backend:8000
+    }
+
+    # Frontend
+    handle {
+        reverse_proxy frontend:3000
+    }
+
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    log {
+        output stdout
+        format console
+    }
+}
+
+# HTTP on port 80 for direct IP access (and Cloudflare Flexible mode)
+:80 {
+    handle /api/* {
+        reverse_proxy backend:8000
+    }
+    handle /ws* {
+        reverse_proxy backend:8000
+    }
+    handle {
+        reverse_proxy frontend:3000
+    }
+}

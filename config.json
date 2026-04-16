@@ -1,0 +1,19 @@
+{
+    "exchange": "binance",
+    "symbol": "ETH/USDT",
+    "api_key": "YOUR_API_KEY_HERE",
+    "api_secret": "YOUR_API_SECRET_HERE",
+
+    "paper_trading": true,
+    "initial_balance_usdt": 200,
+
+    "grid": {
+        "lower_price": 1900,
+        "upper_price": 2300,
+        "num_grids": 10,
+        "total_investment_usdt": 200
+    },
+
+    "check_interval_seconds": 30,
+    "log_file": "trades.log"
+}
