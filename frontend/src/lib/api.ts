@@ -185,3 +185,89 @@ export function testTelegram() {
     method: "POST",
   });
 }
+
+// ── AI Auto-Pilot ──────────────────────────────────────────
+
+export interface AIStrategyResult {
+  pair: string;
+  strategy: string;
+  pnl: number;
+  pnl_pct: number;
+  monthly_roi: number;
+  sharpe: number;
+  max_drawdown: number;
+  win_rate: number;
+  num_trades: number;
+  score: number;
+  config: Record<string, unknown>;
+}
+
+export interface AIAnalyzeResponse {
+  investment: number;
+  days: number;
+  results_30d: AIStrategyResult[];
+  results_90d: AIStrategyResult[];
+  recommendation: AIStrategyResult;
+  alternative?: AIStrategyResult;
+  confidence: "high" | "medium" | "low";
+  risk_level: "low" | "medium" | "high";
+  expected_monthly_return_usd: number;
+  expected_monthly_return_pct: number;
+}
+
+export function aiAnalyze(investment: number) {
+  return apiFetch<AIAnalyzeResponse>("/ai/analyze", {
+    method: "POST",
+    body: JSON.stringify({ investment, days: 90 }),
+  });
+}
+
+export function aiDeploy(body: {
+  investment: number;
+  pair: string;
+  strategy: string;
+  config: Record<string, unknown>;
+  paper: boolean;
+  name?: string;
+}) {
+  return apiFetch<{
+    bot_id: string;
+    name: string;
+    status: string;
+    message: string;
+  }>("/ai/deploy", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+// ── Market Data ────────────────────────────────────────────
+
+export interface Candle {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+export function getCandles(symbol: string, timeframe = "1h", limit = 100) {
+  const enc = encodeURIComponent(symbol);
+  return apiFetch<{ symbol: string; timeframe: string; candles: Candle[] }>(
+    `/market/candles/${enc}?timeframe=${timeframe}&limit=${limit}`
+  );
+}
+
+export function getTicker(symbol: string) {
+  const enc = encodeURIComponent(symbol);
+  return apiFetch<{
+    symbol: string;
+    price: number;
+    change_24h_pct: number;
+    high_24h: number;
+    low_24h: number;
+    volume_24h: number;
+    timestamp: number;
+  }>(`/market/ticker/${enc}`);
+}

@@ -51,6 +51,18 @@ except Exception as exc:  # noqa: BLE001
     _router_errors.append(f"alerts: {exc}")
 
 try:
+    from routers.ai import router as ai_router
+except Exception as exc:  # noqa: BLE001
+    ai_router = None
+    _router_errors.append(f"ai: {exc}")
+
+try:
+    from routers.market import router as market_router
+except Exception as exc:  # noqa: BLE001
+    market_router = None
+    _router_errors.append(f"market: {exc}")
+
+try:
     from services.bot_manager import BotManager as FullBotManager
 except Exception as exc:  # noqa: BLE001
     FullBotManager = None
@@ -235,6 +247,10 @@ if portfolio_router is not None:
     app.include_router(portfolio_router, prefix="/api/v1")
 if alerts_router is not None:
     app.include_router(alerts_router, prefix="/api/v1")
+if ai_router is not None:
+    app.include_router(ai_router, prefix="/api/v1")
+if market_router is not None:
+    app.include_router(market_router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------

@@ -133,13 +133,44 @@ def run_backtest(
     investment = params.get("investment", 1000.0)
 
     # ── Fetch OHLCV data ───────────────────────────────────────────────
+    # Use the market router's exchange (handles geo-restriction fallback)
     if exchange is None:
-        exchange = ExchangeService.get_exchange(paper=True)
+        try:
+            from routers.market import _get_exchange
+            exchange = _get_exchange()
+        except Exception:
+            exchange = ExchangeService.get_exchange(paper=True)
 
     logger.info("Fetching %d days of %s %s data for backtest", days, symbol, "1h")
-    df: pd.DataFrame = ExchangeService.fetch_ohlcv(
-        exchange, symbol, timeframe="1h", days=days
-    )
+
+    # Raw ccxt fetch (works with any CCXT-supported exchange)
+    import time
+    try:
+        since = exchange.milliseconds() - days * 86_400_000
+        all_candles: List[list] = []
+        while since < exchange.milliseconds():
+            batch = exchange.fetch_ohlcv(symbol, "1h", since=since, limit=1000)
+            if not batch:
+                break
+            all_candles.extend(batch)
+            since = batch[-1][0] + 1
+            time.sleep(getattr(exchange, "rateLimit", 500) / 1000)
+
+        if not all_candles:
+            raise ValueError(f"No OHLCV data returned for {symbol} over {days} days.")
+
+        df = pd.DataFrame(
+            all_candles,
+            columns=["timestamp", "open", "high", "low", "close", "volume"],
+        )
+        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
+        df = df.drop_duplicates(subset=["timestamp"]).reset_index(drop=True)
+    except Exception as exc:
+        # Fallback to original ExchangeService method
+        logger.warning("Direct fetch failed (%s), using ExchangeService", exc)
+        df = ExchangeService.fetch_ohlcv(
+            exchange, symbol, timeframe="1h", days=days
+        )
 
     if df.empty:
         raise ValueError(

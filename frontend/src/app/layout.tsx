@@ -39,6 +39,12 @@ const geistMono = Geist_Mono({
 
 const navSections = [
   {
+    label: "AI",
+    items: [
+      { href: "/autopilot", label: "Auto-Pilot", icon: Zap },
+    ],
+  },
+  {
     label: "Main",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
