@@ -10,15 +10,15 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-from backend.bots.strategies import (
+from bots.strategies import (
     GridStrategy,
     DCAStrategy,
     MeanReversionStrategy,
     MomentumStrategy,
     CombinedStrategy,
 )
-from backend.services.exchange_service import ExchangeService
-from backend.services.analytics_service import compute_metrics
+from services.exchange_service import ExchangeService
+from services.analytics_service import compute_metrics
 
 logger = logging.getLogger(__name__)
 

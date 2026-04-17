@@ -354,6 +354,47 @@ class AlertService:
             )
             return subject, body
 
+        elif event_type == "kill_switch":
+            count = data.get("bots_stopped", 0)
+            errors = data.get("errors", 0)
+            stopped = data.get("stopped_bots", [])
+            subject = f"🚨 Kill Switch Activated - {count} bot(s) stopped"
+            lines = [
+                "<b>🚨 KILL SWITCH ACTIVATED</b>",
+                f"Bots stopped: <b>{count}</b>",
+            ]
+            if errors:
+                lines.append(f"Errors: <b>{errors}</b>")
+            if stopped:
+                lines.append("")
+                lines.append("<b>Stopped bots:</b>")
+                for b in stopped:
+                    lines.append(f"  • {b.get('name', 'unnamed')}")
+            lines.append("")
+            lines.append("⚠️ Check the exchange for any open orders that may need manual close.")
+            body = "\n".join(lines)
+            return subject, body
+
+        elif event_type == "bot_crash":
+            bot_id = data.get("bot_id", "N/A")
+            bot_name = data.get("bot_name", "Unknown")
+            error = data.get("error", "Unknown error")
+            subject = f"❌ Bot Crashed: {bot_name}"
+            body = (
+                f"<b>❌ Bot Crashed</b>\n"
+                f"Bot: {bot_name} ({bot_id})\n"
+                f"Error: <code>{error}</code>\n\n"
+                f"The bot has stopped. Check logs and the dashboard to diagnose."
+            )
+            return subject, body
+
+        elif event_type == "system_health":
+            status = data.get("status", "unknown")
+            details = data.get("details", "")
+            subject = f"System Health: {status}"
+            body = f"<b>System Health Alert</b>\nStatus: {status}\n{details}"
+            return subject, body
+
         else:
             logger.warning("Unknown event type: %s", event_type)
             return "", ""

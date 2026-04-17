@@ -15,14 +15,14 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 import ccxt
 
-from backend.bots.strategies import (
+from bots.strategies import (
     GridStrategy,
     DCAStrategy,
     MeanReversionStrategy,
     MomentumStrategy,
     CombinedStrategy,
 )
-from backend.services.exchange_service import ExchangeService, PaperExchange
+from services.exchange_service import ExchangeService, PaperExchange
 
 logger = logging.getLogger(__name__)
 

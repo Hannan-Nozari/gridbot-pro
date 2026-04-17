@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { KillSwitchButton } from "@/components/kill-switch";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -282,6 +283,9 @@ function AppHeader() {
           </span>
           <span className="text-xs font-medium text-profit">Live</span>
         </div>
+
+        {/* Emergency Kill Switch */}
+        <KillSwitchButton />
 
         {/* Avatar */}
         <div className="flex h-9 w-9 items-center justify-center rounded-xl brand-gradient text-sm font-bold text-white">

@@ -1,10 +1,10 @@
 """Backend services for the crypto grid trading bot."""
 
-from backend.services.exchange_service import ExchangeService, PaperExchange
-from backend.services.analytics_service import compute_metrics
-from backend.services.backtest_service import run_backtest
-from backend.services.bot_manager import BotManager
-from backend.services.alert_service import AlertService
+from services.exchange_service import ExchangeService, PaperExchange
+from services.analytics_service import compute_metrics
+from services.backtest_service import run_backtest
+from services.bot_manager import BotManager
+from services.alert_service import AlertService
 
 __all__ = [
     "ExchangeService",

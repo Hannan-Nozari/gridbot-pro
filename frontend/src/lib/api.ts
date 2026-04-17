@@ -103,6 +103,15 @@ export function deleteBot(id: string) {
   return apiFetch<void>(`/bots/${id}`, { method: "DELETE" });
 }
 
+export function killSwitch() {
+  return apiFetch<{
+    success: boolean;
+    message: string;
+    bots_stopped: { id: string; name: string }[];
+    errors: { id: string; name: string; error: string }[];
+  }>(`/bots/kill-switch`, { method: "POST" });
+}
+
 // ── Trades ─────────────────────────────────────────────────
 
 export function getTrades(params?: TradeQueryParams) {

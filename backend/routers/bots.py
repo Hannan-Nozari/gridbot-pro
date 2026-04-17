@@ -60,6 +60,54 @@ async def get_bots(request: Request):
     return results
 
 
+@router.post("/kill-switch", status_code=200)
+async def kill_switch(request: Request):
+    """
+    EMERGENCY: Stop ALL running bots immediately.
+
+    Use this as a panic button if something goes wrong. All bots will be
+    stopped, and the event will be logged and alerted via configured channels
+    (Telegram, email).
+    """
+    bm = _bot_manager(request)
+    rows = list_bots()
+    running = [r for r in rows if r.get("status") == "running"]
+
+    stopped = []
+    errors = []
+
+    for row in running:
+        try:
+            bm.stop_bot(row["id"])
+            update_bot_status(row["id"], "stopped", timestamp_col="stopped_at")
+            stopped.append({"id": row["id"], "name": row["name"]})
+        except Exception as exc:
+            errors.append({"id": row["id"], "name": row["name"], "error": str(exc)})
+
+    # Fire alert if alert service is available
+    try:
+        alert_service = getattr(request.app.state, "alert_service", None)
+        if alert_service is not None:
+            alert_service.check_and_alert(
+                "kill_switch",
+                {
+                    "bots_stopped": len(stopped),
+                    "errors": len(errors),
+                    "stopped_bots": stopped,
+                },
+                None,
+            )
+    except Exception:
+        pass
+
+    return {
+        "success": True,
+        "message": f"Kill switch activated. {len(stopped)} bot(s) stopped.",
+        "bots_stopped": stopped,
+        "errors": errors,
+    }
+
+
 @router.post("", response_model=BotResponse, status_code=201)
 async def create_bot(body: BotCreate, request: Request):
     """Create a new bot, persist to DB, and register with the bot manager."""
