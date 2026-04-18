@@ -63,6 +63,18 @@ except Exception as exc:  # noqa: BLE001
     _router_errors.append(f"market: {exc}")
 
 try:
+    from routers.regime import router as regime_router
+except Exception as exc:  # noqa: BLE001
+    regime_router = None
+    _router_errors.append(f"regime: {exc}")
+
+try:
+    from services.regime_detector import build_regime_detector
+except Exception as exc:  # noqa: BLE001
+    build_regime_detector = None
+    _router_errors.append(f"regime_detector: {exc}")
+
+try:
     from services.bot_manager import BotManager as FullBotManager
 except Exception as exc:  # noqa: BLE001
     FullBotManager = None
@@ -202,9 +214,28 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
         except Exception:  # noqa: BLE001
             pass
 
+    # Launch the Market Regime Detector in the background
+    regime_task = None
+    if build_regime_detector is not None:
+        try:
+            det = build_regime_detector(bot_manager, alert_service)
+            _app.state.regime_detector = det
+            regime_task = asyncio.create_task(det.run())
+            logger.info("Regime detector background task started")
+        except Exception:  # noqa: BLE001
+            logger.exception("Failed to start regime detector")
+    else:
+        _app.state.regime_detector = None
+
     yield
 
     # Shutdown
+    try:
+        if regime_task and not regime_task.done():
+            regime_task.cancel()
+    except Exception:  # noqa: BLE001
+        pass
+
     try:
         if hasattr(bot_manager, "stop_all"):
             result = bot_manager.stop_all()
@@ -251,6 +282,8 @@ if ai_router is not None:
     app.include_router(ai_router, prefix="/api/v1")
 if market_router is not None:
     app.include_router(market_router, prefix="/api/v1")
+if regime_router is not None:
+    app.include_router(regime_router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------

@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { KillSwitchButton } from "@/components/kill-switch";
+import { RegimeBadge } from "@/components/regime-badge";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -281,14 +282,8 @@ function AppHeader() {
           />
         </div>
 
-        {/* Live indicator */}
-        <div className="flex items-center gap-2 rounded-xl border border-profit/20 bg-profit/10 px-3 py-1.5">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-profit opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-profit" />
-          </span>
-          <span className="text-xs font-medium text-profit">Live</span>
-        </div>
+        {/* Regime Badge */}
+        <RegimeBadge />
 
         {/* Emergency Kill Switch */}
         <KillSwitchButton />

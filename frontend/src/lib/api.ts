@@ -271,3 +271,59 @@ export function getTicker(symbol: string) {
     timestamp: number;
   }>(`/market/ticker/${enc}`);
 }
+
+// ── Market Regime ──────────────────────────────────────────
+
+export type Regime = "good" | "caution" | "bad" | "unknown";
+
+export interface RegimeSignals {
+  btc_1h_pct: number;
+  btc_24h_pct: number;
+  volatility_pct: number;
+  trend_strength_pct: number;
+  drawdown_pct: number;
+  btc_price: number;
+}
+
+export interface RegimeStatus {
+  regime: Regime;
+  action: "run" | "hold" | "pause";
+  signals: RegimeSignals;
+  reasons: string[];
+  bad_count: number;
+  caution_count: number;
+  timestamp: string;
+  summary: string;
+  enabled: boolean;
+  thresholds?: Record<string, number | boolean>;
+  bots_paused_by_regime?: number;
+}
+
+export function getRegime() {
+  return apiFetch<RegimeStatus>("/regime/status");
+}
+
+export function forceRegimeAnalysis() {
+  return apiFetch<RegimeStatus>("/regime/analyze-now", { method: "POST" });
+}
+
+export function getRegimeHistory(limit = 50) {
+  return apiFetch<{
+    history: {
+      id: number;
+      timestamp: string;
+      regime: string;
+      action: string;
+      signals: RegimeSignals;
+      reasons: string[];
+      summary: string;
+    }[];
+  }>(`/regime/history?limit=${limit}`);
+}
+
+export function updateRegimeThresholds(body: Record<string, number | boolean>) {
+  return apiFetch<{ thresholds: Record<string, number | boolean> }>(
+    "/regime/thresholds",
+    { method: "PUT", body: JSON.stringify(body) }
+  );
+}
