@@ -75,6 +75,18 @@ except Exception as exc:  # noqa: BLE001
     _router_errors.append(f"regime_detector: {exc}")
 
 try:
+    from routers.autonomy import router as autonomy_router
+except Exception as exc:  # noqa: BLE001
+    autonomy_router = None
+    _router_errors.append(f"autonomy: {exc}")
+
+try:
+    from services.autonomy_service import build_autonomy_service
+except Exception as exc:  # noqa: BLE001
+    build_autonomy_service = None
+    _router_errors.append(f"autonomy_service: {exc}")
+
+try:
     from services.bot_manager import BotManager as FullBotManager
 except Exception as exc:  # noqa: BLE001
     FullBotManager = None
@@ -227,12 +239,31 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     else:
         _app.state.regime_detector = None
 
+    # Launch the Autonomy Service (auto-rebalance, weekly AI, daily digest)
+    autonomy_task = None
+    if build_autonomy_service is not None:
+        try:
+            auton = build_autonomy_service(bot_manager, alert_service)
+            _app.state.autonomy_service = auton
+            autonomy_task = asyncio.create_task(auton.run())
+            logger.info("Autonomy service background task started")
+        except Exception:  # noqa: BLE001
+            logger.exception("Failed to start autonomy service")
+    else:
+        _app.state.autonomy_service = None
+
     yield
 
     # Shutdown
     try:
         if regime_task and not regime_task.done():
             regime_task.cancel()
+    except Exception:  # noqa: BLE001
+        pass
+
+    try:
+        if autonomy_task and not autonomy_task.done():
+            autonomy_task.cancel()
     except Exception:  # noqa: BLE001
         pass
 
@@ -284,6 +315,8 @@ if market_router is not None:
     app.include_router(market_router, prefix="/api/v1")
 if regime_router is not None:
     app.include_router(regime_router, prefix="/api/v1")
+if autonomy_router is not None:
+    app.include_router(autonomy_router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------

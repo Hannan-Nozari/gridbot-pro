@@ -1,6 +1,6 @@
 "use client";
 
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { useState } from "react";
 import Link from "next/link";
@@ -13,6 +13,7 @@ import {
   ArrowLeftRight,
   Bell,
   Settings,
+  Cpu,
   LogOut,
   Lock,
   Search,
@@ -28,14 +29,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { KillSwitchButton } from "@/components/kill-switch";
 import { RegimeBadge } from "@/components/regime-badge";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 const navSections = [
@@ -43,6 +48,7 @@ const navSections = [
     label: "AI",
     items: [
       { href: "/autopilot", label: "Auto-Pilot", icon: Zap },
+      { href: "/autonomy", label: "Automation", icon: Cpu },
     ],
   },
   {
@@ -307,7 +313,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${manrope.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full">
         {!isAuthenticated ? (

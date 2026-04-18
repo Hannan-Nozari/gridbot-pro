@@ -327,3 +327,49 @@ export function updateRegimeThresholds(body: Record<string, number | boolean>) {
     { method: "PUT", body: JSON.stringify(body) }
   );
 }
+
+// ── Autonomy (set-and-forget automation) ────────────────────
+
+export interface AutonomyConfig {
+  rebalance_enabled: boolean;
+  rebalance_drift_pct: number;
+  rebalance_notify_only: boolean;
+  rebalance_check_seconds: number;
+  weekly_reeval_enabled: boolean;
+  weekly_reeval_day: number;
+  weekly_reeval_hour_utc: number;
+  digest_enabled: boolean;
+  digest_hour_utc: number;
+}
+
+export interface AutonomyStatus {
+  enabled: boolean;
+  config: AutonomyConfig;
+  last_rebalance_check: number;
+  last_reeval_check: number;
+  last_digest_sent: number;
+  rebalance_actions: Array<Record<string, unknown>>;
+  summary?: string;
+}
+
+export function getAutonomy() {
+  return apiFetch<AutonomyStatus>("/autonomy/status");
+}
+
+export function updateAutonomy(config: Partial<AutonomyConfig>) {
+  return apiFetch<{ config: AutonomyConfig }>("/autonomy/config", {
+    method: "PUT",
+    body: JSON.stringify(config),
+  });
+}
+
+export function sendDigestNow() {
+  return apiFetch<{ sent: boolean }>("/autonomy/digest/send-now", { method: "POST" });
+}
+
+export function checkRebalanceNow() {
+  return apiFetch<{ checked: boolean; actions: Array<Record<string, unknown>> }>(
+    "/autonomy/rebalance/check-now",
+    { method: "POST" }
+  );
+}
